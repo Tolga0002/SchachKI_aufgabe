@@ -1,7 +1,7 @@
 @ECHO OFF
 
 pushd %~dp0
-sphinx-build . ./docs
+sphinx-build -b html -D html_baseurl=https://dmu1981.github.io/SchachKI_aufgabe/ . ./docs
 goto end
 
 REM Command file for Sphinx documentation

@@ -1,7 +1,7 @@
 @ECHO OFF
 
 pushd %~dp0
-sphinx-build . ./_build 
+sphinx-build . ./docs/_build 
 goto end
 
 REM Command file for Sphinx documentation

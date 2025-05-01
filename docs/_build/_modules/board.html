@@ -1,0 +1,519 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>board &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine.html">Die Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">board</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for board</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pieces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pawn</span><span class="p">,</span> <span class="n">Rook</span><span class="p">,</span> <span class="n">Bishop</span><span class="p">,</span> <span class="n">Queen</span><span class="p">,</span> <span class="n">King</span><span class="p">,</span> <span class="n">Knight</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">map_piece_to_character</span><span class="p">,</span>
+    <span class="n">InvalidColumnException</span><span class="p">,</span>
+    <span class="n">InvalidRowException</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="BoardBase">
+<a class="viewcode-back" href="../board.html#board.BoardBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoardBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base Class for the Chess Board.</span>
+<span class="sd">    You are free to look around the members of this class and their implementation, however you will not need to change</span>
+<span class="sd">    anything in this class for any of the tasks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        Start with empty cells</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a nice printable (on console) representation for the current board configuration.</span>
+<span class="sd">        This is an extended form, meant for readability on console output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">map_piece_to_character</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BoardBase.hash">
+<a class="viewcode-back" href="../board.html#board.BoardBase.hash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a unique hash (string) representation for the current board configuration.</span>
+<span class="sd">        This is short form, not meant for readability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">map_piece_to_character</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="BoardBase.save_to_disk">
+<a class="viewcode-back" href="../board.html#board.BoardBase.save_to_disk">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves current board configuration to disk.</span>
+
+<span class="sd">        :param name: Filename to use. If None is provided, a unique one will be generated</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;.board&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="BoardBase.clear_board">
+<a class="viewcode-back" href="../board.html#board.BoardBase.clear_board">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_board</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears to board, deleting all pieces currently placed on it</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="BoardBase.load_from_memory">
+<a class="viewcode-back" href="../board.html#board.BoardBase.load_from_memory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_from_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configString</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read previously stored configuration from a memory string</span>
+
+<span class="sd">        :param name: Filename to use. </span>
+<span class="sd">        &quot;&quot;&quot;</span>       
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">configString</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)):</span>
+              <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+              <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">pieceCode</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                
+                <span class="k">if</span> <span class="n">pieceCode</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                    <span class="n">white</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">white</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">pieceCode</span> <span class="o">=</span> <span class="n">pieceCode</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">Pawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;K&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">King</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;Q&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">Queen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">Knight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">Bishop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pieceCode</span> <span class="o">==</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span>
+                    <span class="n">piece</span> <span class="o">=</span> <span class="n">Rook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="o">-</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]),</span> <span class="n">piece</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoardBase.load_from_disk">
+<a class="viewcode-back" href="../board.html#board.BoardBase.load_from_disk">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_from_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read previously stored configuration from disk</span>
+
+<span class="sd">        :param name: Filename to use. </span>
+<span class="sd">        &quot;&quot;&quot;</span>       
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_from_memory</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+
+            
+
+<div class="viewcode-block" id="BoardBase.is_king_check_cached">
+<a class="viewcode-back" href="../board.html#board.BoardBase.is_king_check_cached">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_king_check_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls is_king_check for board configurations not yet known. Caches the result for later look-up.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate hash and see if current position is in the cache</span>
+        <span class="nb">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;-w&quot;</span> <span class="k">if</span> <span class="n">white</span> <span class="k">else</span> <span class="s2">&quot;-b&quot;</span>
+        <span class="k">if</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_cache</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span>
+
+        <span class="c1"># No, so evaluate it</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_king_check</span><span class="p">(</span><span class="n">white</span><span class="p">)</span>
+
+        <span class="c1"># Cache it for later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_cache</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="BoardBase.get_cell">
+<a class="viewcode-back" href="../board.html#board.BoardBase.get_cell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the piece placed on the given cell or &quot;None&quot; if cell is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If the cell is not valid, there cannot be a piece on it</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Unpack coordinates</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">cell</span>
+
+        <span class="c1"># Return the piece on the cell</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BoardBase.set_cell">
+<a class="viewcode-back" href="../board.html#board.BoardBase.set_cell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">piece</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Places a piece on a given cell.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Unpack coordinates</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">cell</span>
+
+        <span class="c1"># Check if they are valid, raise an Exception if not</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">row</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidRowException</span><span class="p">((</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidColumnException</span><span class="p">((</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+
+        <span class="c1"># If there is a piece to place, there is maintenance stuff to do</span>
+        <span class="k">if</span> <span class="n">piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If the piece has a cell (so it was placed on the board already), set that cell to None</span>
+            <span class="k">if</span> <span class="n">piece</span><span class="o">.</span><span class="n">cell</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">cell</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># Update the pieces cell</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span>
+
+        <span class="c1"># Update the cell on the board</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">piece</span></div>
+
+
+<div class="viewcode-block" id="BoardBase.reset">
+<a class="viewcode-back" href="../board.html#board.BoardBase.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the board to its default (start) configuration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Start with all empty cells</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+
+        <span class="c1"># Pawns</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">]),</span> <span class="n">Pawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="n">col</span><span class="p">]),</span> <span class="n">Pawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># Rooks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">Rook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span> <span class="n">Rook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">Rook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span> <span class="n">Rook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># Knights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">Knight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span> <span class="n">Knight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">Knight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span> <span class="n">Knight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># Bishops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">Bishop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span> <span class="n">Bishop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">Bishop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span> <span class="n">Bishop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># Queen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">Queen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">Queen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># King</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">King</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">King</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span></div>
+</div>
+
+
+        <span class="c1">#self.save_to_disk()</span>
+
+
+<div class="viewcode-block" id="Board">
+<a class="viewcode-back" href="../board.html#board.Board">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Board</span><span class="p">(</span><span class="n">BoardBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Your implementation of the chess board. You will need to find implementations for all of these methods. </span>
+
+<span class="sd">    **HINT**: Read the documentation carefully. Also look at the parent class (BoardBase) for further reference and example implementations. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor, currently does nothing but calling the super constructor. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Board.iterate_cells_with_pieces">
+<a class="viewcode-back" href="../board.html#board.Board.iterate_cells_with_pieces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iterate_cells_with_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Write a generator (using the yield keyword) that allows to iterate</span>
+<span class="sd">        over all cells with a piece of given color.</span>
+
+<span class="sd">        **HINT**: You need a double-nested loop,</span>
+<span class="sd">        the first one iterates over all the rows, the second one iterates over each cell in the current row.</span>
+<span class="sd">        If the cell has a piece (so it is not None) and the piece has the correct color, *yield* it</span>
+
+<span class="sd">        :param white: True if WHITE pieces are to be iterated, False otherwise</span>
+<span class="sd">        :type white: Boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.find_king">
+<a class="viewcode-back" href="../board.html#board.Board.find_king">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_king</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Find the king piece of given color and return that piece</span>
+
+<span class="sd">        **HINT**: You can use the iterate_cells_with_pieces() Method to find all</span>
+<span class="sd">        pieces of a given color</span>
+
+<span class="sd">        :param white: True if WHITE pieces are to be iterated, False otherwise</span>
+<span class="sd">        :type white: Boolean</span>
+
+<span class="sd">        :return: The :py:class:&#39;King&#39;: object of the given color or None if there is no King on the board.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.is_king_check">
+<a class="viewcode-back" href="../board.html#board.Board.is_king_check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_king_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Evaluate if the king of given color is currently in check.</span>
+<span class="sd">        A check is given if any opposing piece can beat the king in its next move.</span>
+
+<span class="sd">        **HINT**: You can use the find_king() Method to find the king of the given color.</span>
+<span class="sd">        Then use the iterate_cells_with_pieces Method to find all pieces of *opposing color* (negate the &quot;white&quot;-parameter)</span>
+<span class="sd">        For each opposing piece, call the &quot;get_reachable_cells()&quot; method to get a list of all reachable cells.</span>
+<span class="sd">        Iterate over each reachable cell and check if the kings cell is reachable. If yes, shortcut and return True right away.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.evaluate">
+<a class="viewcode-back" href="../board.html#board.Board.evaluate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Evaluate the current board configuration into a numerical number.</span>
+<span class="sd">        The higher the number, to more favorable for WHITE (note: This is always from whites perspective!) the current configuration is.</span>
+
+
+<span class="sd">        **HINT**: Start with a score of zero.</span>
+<span class="sd">        Use the iterate_cells_with_pieces Method to find all WHITE pieces and call their respective &quot;evaluate&quot; Method. Sum those scores up.</span>
+<span class="sd">        Then use the iterate_cells_with_pieces Method to find all BLACK pieces, call their respective &quot;evaluate&quot; Method and substract that from the score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.is_valid_cell">
+<a class="viewcode-back" href="../board.html#board.Board.is_valid_cell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Check if the given cell coordinates are valid. A cell coordinate is valid if both</span>
+<span class="sd">        row and coloumn are between 0 and 7 inclusively.</span>
+
+<span class="sd">        **HINT**:</span>
+<span class="sd">        Cell is a tuple (row, col) of row and column. Unpack the tuple and check both row and col for</span>
+<span class="sd">        being within the allowed range (0 to 7 inclusively).</span>
+<span class="sd">        Don´t forget to handle the special case of &quot;cell&quot; being None. Return False in that case</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.cell_is_valid_and_empty">
+<a class="viewcode-back" href="../board.html#board.Board.cell_is_valid_and_empty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cell_is_valid_and_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Check if the given cell is empty, meaning there is no piece placed on it.</span>
+
+<span class="sd">        **HINT**:</span>
+<span class="sd">        You can use the &quot;is_valid_cell()&quot; Method to verify the cell is valid in the first place.</span>
+<span class="sd">        If so, use &quot;get_cell()&quot; to retrieve the piece placed on it and return True if there is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.piece_can_enter_cell">
+<a class="viewcode-back" href="../board.html#board.Board.piece_can_enter_cell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">piece_can_enter_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Check if the given piece can enter the given cell.</span>
+<span class="sd">        Note: You don´t need to check movement rules for the individual piece here. You only need to answer the question</span>
+<span class="sd">        whether the piece can be placed on the given cell or not.</span>
+
+<span class="sd">        A piece can be placed on a cell if the cell is valid and either empty or an opposing piece is placed here.</span>
+<span class="sd">        A cell cannot be entered if a piece of the same color is already in that cell.</span>
+
+<span class="sd">        **HINT**:</span>
+<span class="sd">        You can use the &quot;is_valid_cell()&quot; Method to verify the cell is valid in the first place.</span>
+<span class="sd">        If so, use &quot;get_cell()&quot; to retrieve the piece placed on it. If there is None, this cell can be entered</span>
+<span class="sd">        If, however, there is another piece, it must be of opposing color. Check the other pieces &quot;white&quot; attribute and compare against</span>
+<span class="sd">        the given piece &quot;white&quot; attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Board.piece_can_hit_on_cell">
+<a class="viewcode-back" href="../board.html#board.Board.piece_can_hit_on_cell">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">piece_can_hit_on_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **TODO**: Check if the given piece can *hit* at the given cell.</span>
+<span class="sd">        Note: You don´t need to check movement rules for the individual piece here. You only need to answer the question</span>
+<span class="sd">        whether the piece can be placed on the given cell or not and hit an opposing piece.</span>
+
+<span class="sd">        A piece can hit on a cell if the cell is valid and an opposing piece is placed here.</span>
+<span class="sd">        A cell cannot be hit if the cell is empty or a piece of the same color is already in that cell.</span>
+
+<span class="sd">        **HINT**:</span>
+<span class="sd">        You can use the &quot;is_valid_cell()&quot; Method to verify the cell is valid in the first place.</span>
+<span class="sd">        If so, use &quot;get_cell()&quot; to retrieve the piece placed on it. If there is None, this cell cannot be hit.</span>
+<span class="sd">        If, however, there is another piece, it must be of opposing color. Check the other pieces &quot;white&quot; attribute and compare against</span>
+<span class="sd">        the given piece &quot;white&quot; attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">pass</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

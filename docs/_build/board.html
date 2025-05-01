@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Die Board-Klasse zur Repräsentation des Schachbretts &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Einleitung: Objektorientierte Modellierung der Schachfiguren" href="figures.html" />
+    <link rel="prev" title="Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max" href="chessengine.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Das Brett</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#funktionalitat-im-uberblick">Funktionalität im Überblick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modularer-aufbau-und-erweiterbarkeit">Modularer Aufbau und Erweiterbarkeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-board">Reference - Board</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#board.Board"><code class="docutils literal notranslate"><span class="pre">Board</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.cell_is_valid_and_empty"><code class="docutils literal notranslate"><span class="pre">Board.cell_is_valid_and_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.evaluate"><code class="docutils literal notranslate"><span class="pre">Board.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.find_king"><code class="docutils literal notranslate"><span class="pre">Board.find_king()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.is_king_check"><code class="docutils literal notranslate"><span class="pre">Board.is_king_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.is_valid_cell"><code class="docutils literal notranslate"><span class="pre">Board.is_valid_cell()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.iterate_cells_with_pieces"><code class="docutils literal notranslate"><span class="pre">Board.iterate_cells_with_pieces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.piece_can_enter_cell"><code class="docutils literal notranslate"><span class="pre">Board.piece_can_enter_cell()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.Board.piece_can_hit_on_cell"><code class="docutils literal notranslate"><span class="pre">Board.piece_can_hit_on_cell()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-base-board">Reference - Base Board</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#board.BoardBase"><code class="docutils literal notranslate"><span class="pre">BoardBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.clear_board"><code class="docutils literal notranslate"><span class="pre">BoardBase.clear_board()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.get_cell"><code class="docutils literal notranslate"><span class="pre">BoardBase.get_cell()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.hash"><code class="docutils literal notranslate"><span class="pre">BoardBase.hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.is_king_check_cached"><code class="docutils literal notranslate"><span class="pre">BoardBase.is_king_check_cached()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.load_from_disk"><code class="docutils literal notranslate"><span class="pre">BoardBase.load_from_disk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.load_from_memory"><code class="docutils literal notranslate"><span class="pre">BoardBase.load_from_memory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.reset"><code class="docutils literal notranslate"><span class="pre">BoardBase.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.save_to_disk"><code class="docutils literal notranslate"><span class="pre">BoardBase.save_to_disk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#board.BoardBase.set_cell"><code class="docutils literal notranslate"><span class="pre">BoardBase.set_cell()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine.html">Die Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Die Board-Klasse zur Repräsentation des Schachbretts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/board.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="die-board-klasse-zur-reprasentation-des-schachbretts">
+<h1>Die Board-Klasse zur Repräsentation des Schachbretts<a class="headerlink" href="#die-board-klasse-zur-reprasentation-des-schachbretts" title="Link to this heading"></a></h1>
+<p>Die <cite>Board</cite>-Klasse bildet das Herzstück des Schachprojekts. Sie stellt eine flexible und erweiterbare Datenstruktur dar, mit der sich <strong>Schachstellungen speichern, verändern, bewerten und analysieren</strong> lassen. Die Klasse ist in zwei Ebenen aufgebaut: eine abstrakte Basisklasse (<cite>BoardBase</cite>) mit grundlegender Funktionalität und eine erweiterte Implementierung (<cite>Board</cite>), in der zentrale Methoden von den Studierenden selbst implementiert werden.</p>
+<p>Ziel ist es, ein realistisch spielbares Schachbrett in Python zu modellieren, das als Grundlage für weiterführende KI-Algorithmen wie <strong>Mini-Max</strong> dient. Dabei übernimmt die <cite>Board</cite>-Klasse nicht nur das Verwalten der Figurenpositionen, sondern bietet auch Methoden zur Bewertung der Stellung, zur Validierung von Zügen sowie zur Erkennung kritischer Spielsituationen wie Schach.</p>
+<section id="funktionalitat-im-uberblick">
+<h2>Funktionalität im Überblick<a class="headerlink" href="#funktionalitat-im-uberblick" title="Link to this heading"></a></h2>
+<p>Die Klasse erlaubt unter anderem folgende Operationen:</p>
+<ul class="simple">
+<li><p><strong>Initialisierung und Zurücksetzen</strong> eines vollständigen Startbretts (<a class="reference internal" href="#board.BoardBase.reset" title="board.BoardBase.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset</span></code></a>)</p></li>
+<li><p><strong>Einfügen, Entfernen und Überprüfen</strong> von Figuren auf bestimmten Feldern (<a class="reference internal" href="#board.BoardBase.set_cell" title="board.BoardBase.set_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_cell</span></code></a>, <a class="reference internal" href="#board.BoardBase.get_cell" title="board.BoardBase.get_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cell</span></code></a>)</p></li>
+<li><p><strong>Serialisierung</strong> der Stellung zur Anzeige oder Speicherung (<code class="xref py py-meth docutils literal notranslate"><span class="pre">__str__</span></code>, <a class="reference internal" href="#board.BoardBase.hash" title="board.BoardBase.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hash</span></code></a>, <a class="reference internal" href="#board.BoardBase.save_to_disk" title="board.BoardBase.save_to_disk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_to_disk</span></code></a>, <a class="reference internal" href="#board.BoardBase.load_from_disk" title="board.BoardBase.load_from_disk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_from_disk</span></code></a>)</p></li>
+<li><p><strong>Bewertung</strong> der aktuellen Stellung aus Sicht von Weiß (<a class="reference internal" href="#board.Board.evaluate" title="board.Board.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate</span></code></a>)</p></li>
+<li><p><strong>Erkennung von Schach</strong>-Situationen mittels gegnerischer Angriffsreichweiten (<a class="reference internal" href="#board.Board.is_king_check" title="board.Board.is_king_check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_king_check</span></code></a>)</p></li>
+<li><p><strong>Zugvalidierung</strong>, etwa ob ein Feld betreten oder angegriffen werden darf (<a class="reference internal" href="#board.Board.piece_can_enter_cell" title="board.Board.piece_can_enter_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piece_can_enter_cell</span></code></a>, <a class="reference internal" href="#board.Board.piece_can_hit_on_cell" title="board.Board.piece_can_hit_on_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piece_can_hit_on_cell</span></code></a>)</p></li>
+<li><p><strong>Iteration über Spielfiguren</strong> nach Farbe (<a class="reference internal" href="#board.Board.iterate_cells_with_pieces" title="board.Board.iterate_cells_with_pieces"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterate_cells_with_pieces</span></code></a>)</p></li>
+<li><p><strong>Laden von Stellungen</strong> aus Strings (z. B. für Spielwiederherstellung oder Tests)</p></li>
+</ul>
+</section>
+<section id="modularer-aufbau-und-erweiterbarkeit">
+<h2>Modularer Aufbau und Erweiterbarkeit<a class="headerlink" href="#modularer-aufbau-und-erweiterbarkeit" title="Link to this heading"></a></h2>
+<p>Die Klasse wurde so entworfen, dass sie sowohl als eigenständiges Brettmodell als auch als Baustein für <strong>Schach-KI-Algorithmen</strong> dient. Insbesondere ermöglicht sie es, die Spiellogik klar von der Bewertungslogik und der KI-Strategie zu trennen. Dadurch können später Suchalgorithmen wie Mini-Max oder Alpha-Beta-Pruning problemlos auf dieser Basis aufbauen.</p>
+<p>Die <cite>Board</cite>-Klasse dient somit als zentrales Bindeglied zwischen Spiellogik, Benutzeroberfläche und KI – und ist damit ein essenzieller Bestandteil eures Schachcomputers.</p>
+</section>
+<section id="reference-board">
+<span id="id1"></span><h2>Reference - Board<a class="headerlink" href="#reference-board" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="board.Board">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">board.</span></span><span class="sig-name descname"><span class="pre">Board</span></span><a class="reference internal" href="_modules/board.html#Board"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board" title="Link to this definition"></a></dt>
+<dd><p>Your implementation of the chess board. You will need to find implementations for all of these methods.</p>
+<p><strong>HINT</strong>: Read the documentation carefully. Also look at the parent class (BoardBase) for further reference and example implementations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.cell_is_valid_and_empty">
+<span class="sig-name descname"><span class="pre">cell_is_valid_and_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.cell_is_valid_and_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.cell_is_valid_and_empty" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Check if the given cell is empty, meaning there is no piece placed on it.</p>
+<p><strong>HINT</strong>:
+You can use the “is_valid_cell()” Method to verify the cell is valid in the first place.
+If so, use “get_cell()” to retrieve the piece placed on it and return True if there is None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.evaluate" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Evaluate the current board configuration into a numerical number.
+The higher the number, to more favorable for WHITE (note: This is always from whites perspective!) the current configuration is.</p>
+<p><strong>HINT</strong>: Start with a score of zero.
+Use the iterate_cells_with_pieces Method to find all WHITE pieces and call their respective “evaluate” Method. Sum those scores up.
+Then use the iterate_cells_with_pieces Method to find all BLACK pieces, call their respective “evaluate” Method and substract that from the score.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.find_king">
+<span class="sig-name descname"><span class="pre">find_king</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.find_king"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.find_king" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Find the king piece of given color and return that piece</p>
+<p><strong>HINT</strong>: You can use the iterate_cells_with_pieces() Method to find all
+pieces of a given color</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>white</strong> (<em>Boolean</em>) – True if WHITE pieces are to be iterated, False otherwise</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The :py:class:’King’: object of the given color or None if there is no King on the board.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.is_king_check">
+<span class="sig-name descname"><span class="pre">is_king_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.is_king_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.is_king_check" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Evaluate if the king of given color is currently in check.
+A check is given if any opposing piece can beat the king in its next move.</p>
+<p><strong>HINT</strong>: You can use the find_king() Method to find the king of the given color.
+Then use the iterate_cells_with_pieces Method to find all pieces of <em>opposing color</em> (negate the “white”-parameter)
+For each opposing piece, call the “get_reachable_cells()” method to get a list of all reachable cells.
+Iterate over each reachable cell and check if the kings cell is reachable. If yes, shortcut and return True right away.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.is_valid_cell">
+<span class="sig-name descname"><span class="pre">is_valid_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.is_valid_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.is_valid_cell" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Check if the given cell coordinates are valid. A cell coordinate is valid if both
+row and coloumn are between 0 and 7 inclusively.</p>
+<p><strong>HINT</strong>:
+Cell is a tuple (row, col) of row and column. Unpack the tuple and check both row and col for
+being within the allowed range (0 to 7 inclusively).
+Don´t forget to handle the special case of “cell” being None. Return False in that case</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.iterate_cells_with_pieces">
+<span class="sig-name descname"><span class="pre">iterate_cells_with_pieces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.iterate_cells_with_pieces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.iterate_cells_with_pieces" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Write a generator (using the yield keyword) that allows to iterate
+over all cells with a piece of given color.</p>
+<p><strong>HINT</strong>: You need a double-nested loop,
+the first one iterates over all the rows, the second one iterates over each cell in the current row.
+If the cell has a piece (so it is not None) and the piece has the correct color, <em>yield</em> it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>white</strong> (<em>Boolean</em>) – True if WHITE pieces are to be iterated, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.piece_can_enter_cell">
+<span class="sig-name descname"><span class="pre">piece_can_enter_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piece</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.piece_can_enter_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.piece_can_enter_cell" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Check if the given piece can enter the given cell.
+Note: You don´t need to check movement rules for the individual piece here. You only need to answer the question
+whether the piece can be placed on the given cell or not.</p>
+<p>A piece can be placed on a cell if the cell is valid and either empty or an opposing piece is placed here.
+A cell cannot be entered if a piece of the same color is already in that cell.</p>
+<p><strong>HINT</strong>:
+You can use the “is_valid_cell()” Method to verify the cell is valid in the first place.
+If so, use “get_cell()” to retrieve the piece placed on it. If there is None, this cell can be entered
+If, however, there is another piece, it must be of opposing color. Check the other pieces “white” attribute and compare against
+the given piece “white” attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.Board.piece_can_hit_on_cell">
+<span class="sig-name descname"><span class="pre">piece_can_hit_on_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piece</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#Board.piece_can_hit_on_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.piece_can_hit_on_cell" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>: Check if the given piece can <em>hit</em> at the given cell.
+Note: You don´t need to check movement rules for the individual piece here. You only need to answer the question
+whether the piece can be placed on the given cell or not and hit an opposing piece.</p>
+<p>A piece can hit on a cell if the cell is valid and an opposing piece is placed here.
+A cell cannot be hit if the cell is empty or a piece of the same color is already in that cell.</p>
+<p><strong>HINT</strong>:
+You can use the “is_valid_cell()” Method to verify the cell is valid in the first place.
+If so, use “get_cell()” to retrieve the piece placed on it. If there is None, this cell cannot be hit.
+If, however, there is another piece, it must be of opposing color. Check the other pieces “white” attribute and compare against
+the given piece “white” attribute.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="reference-base-board">
+<h2>Reference - Base Board<a class="headerlink" href="#reference-base-board" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="board.BoardBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">board.</span></span><span class="sig-name descname"><span class="pre">BoardBase</span></span><a class="reference internal" href="_modules/board.html#BoardBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase" title="Link to this definition"></a></dt>
+<dd><p>Base Class for the Chess Board.
+You are free to look around the members of this class and their implementation, however you will not need to change
+anything in this class for any of the tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.clear_board">
+<span class="sig-name descname"><span class="pre">clear_board</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.clear_board"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.clear_board" title="Link to this definition"></a></dt>
+<dd><p>Clears to board, deleting all pieces currently placed on it</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.get_cell">
+<span class="sig-name descname"><span class="pre">get_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.get_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.get_cell" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the piece placed on the given cell or “None” if cell is invalid</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.hash">
+<span class="sig-name descname"><span class="pre">hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.hash" title="Link to this definition"></a></dt>
+<dd><p>Returns a unique hash (string) representation for the current board configuration.
+This is short form, not meant for readability.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.is_king_check_cached">
+<span class="sig-name descname"><span class="pre">is_king_check_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.is_king_check_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.is_king_check_cached" title="Link to this definition"></a></dt>
+<dd><p>Calls is_king_check for board configurations not yet known. Caches the result for later look-up.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.load_from_disk">
+<span class="sig-name descname"><span class="pre">load_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.load_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.load_from_disk" title="Link to this definition"></a></dt>
+<dd><p>Read previously stored configuration from disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – Filename to use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.load_from_memory">
+<span class="sig-name descname"><span class="pre">load_from_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configString</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.load_from_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.load_from_memory" title="Link to this definition"></a></dt>
+<dd><p>Read previously stored configuration from a memory string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – Filename to use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.reset" title="Link to this definition"></a></dt>
+<dd><p>Resets the board to its default (start) configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.save_to_disk">
+<span class="sig-name descname"><span class="pre">save_to_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.save_to_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.save_to_disk" title="Link to this definition"></a></dt>
+<dd><p>Saves current board configuration to disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – Filename to use. If None is provided, a unique one will be generated</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="board.BoardBase.set_cell">
+<span class="sig-name descname"><span class="pre">set_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">piece</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/board.html#BoardBase.set_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.BoardBase.set_cell" title="Link to this definition"></a></dt>
+<dd><p>Places a piece on a given cell.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="chessengine.html" class="btn btn-neutral float-left" title="Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="figures.html" class="btn btn-neutral float-right" title="Einleitung: Objektorientierte Modellierung der Schachfiguren" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

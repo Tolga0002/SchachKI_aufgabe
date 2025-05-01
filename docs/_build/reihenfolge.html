@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Implementierungsreihenfolge der TODO-Methoden &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Einrichtung der Python-Umgebung" href="setup.html" />
+    <link rel="prev" title="Die Schachengine mit Mini-Max-Suche" href="engine.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine.html">Die Engine</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eine sinnvolle Reihenfolge</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#phase-1-grundlagen-im-board-modul">Phase 1: Grundlagen im Board-Modul</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-2-bewegungsregeln-der-figuren">Phase 2: Bewegungsregeln der Figuren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-3-figurenlogik-und-spielfluss">Phase 3: Figurenlogik und Spielfluss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-4-bewertung-und-ki">Phase 4: Bewertung und KI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-5-mini-max-logik">Phase 5: Mini-Max-Logik</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uberblick">Überblick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#zusatzliche-hinweise">Zusätzliche Hinweise</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Implementierungsreihenfolge der TODO-Methoden</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reihenfolge.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="implementierungsreihenfolge-der-todo-methoden">
+<h1>Implementierungsreihenfolge der TODO-Methoden<a class="headerlink" href="#implementierungsreihenfolge-der-todo-methoden" title="Link to this heading"></a></h1>
+<p>Um den Schachcomputer schrittweise aufzubauen, sollten die mit <code class="docutils literal notranslate"><span class="pre">TODO</span></code> markierten Methoden in einer sinnvollen Reihenfolge bearbeitet werden. Diese Seite hilft euch dabei, eine logische Abfolge zu wählen – <strong>von einfachen, unabhängigen Funktionen</strong> bis hin zu <strong>komplexeren, zusammengesetzten Logiken</strong> wie Mini-Max.</p>
+<section id="phase-1-grundlagen-im-board-modul">
+<h2>Phase 1: Grundlagen im Board-Modul<a class="headerlink" href="#phase-1-grundlagen-im-board-modul" title="Link to this heading"></a></h2>
+<p>Beginnt mit den Methoden, die einfache Prüfungen und Datenzugriffe betreffen:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="board.html#board.Board.is_valid_cell" title="board.Board.is_valid_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_valid_cell()</span></code></a>
+- Prüft, ob eine Zelle im gültigen Bereich des Schachbretts liegt.
+- Grundlage fast aller weiteren Bewegungsfunktionen.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.cell_is_valid_and_empty" title="board.Board.cell_is_valid_and_empty"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cell_is_valid_and_empty()</span></code></a>
+- Liefert <cite>True</cite>, wenn eine gültige Zelle leer ist.
+- Baut direkt auf <cite>is_valid_cell()</cite> auf.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.piece_can_enter_cell" title="board.Board.piece_can_enter_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piece_can_enter_cell(piece,</span> <span class="pre">cell)</span></code></a>
+- Prüft, ob eine Figur ein Feld betreten darf (leer oder Gegner).
+- Wichtig für Bewegung und Schlagmechaniken.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.piece_can_hit_on_cell" title="board.Board.piece_can_hit_on_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piece_can_hit_on_cell(piece,</span> <span class="pre">cell)</span></code></a>
+- Prüft, ob eine Figur eine gegnerische Figur auf dem Ziel schlagen kann.</p></li>
+</ol>
+<p>Diese Funktionen müssen <strong>zuerst</strong> korrekt funktionieren, da sie in fast allen Figurenmethoden wiederverwendet werden.</p>
+</section>
+<section id="phase-2-bewegungsregeln-der-figuren">
+<h2>Phase 2: Bewegungsregeln der Figuren<a class="headerlink" href="#phase-2-bewegungsregeln-der-figuren" title="Link to this heading"></a></h2>
+<p>Im nächsten Schritt implementiert ihr die <cite>get_reachable_cells()</cite>-Methoden jeder Figur. Diese bilden das Fundament für mögliche Züge:</p>
+<ol class="arabic simple" start="5">
+<li><p><a class="reference internal" href="figures.html#pieces.Pawn.get_reachable_cells" title="pieces.Pawn.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Pawn.get_reachable_cells()</span></code></a></p></li>
+<li><p><a class="reference internal" href="figures.html#pieces.Rook.get_reachable_cells" title="pieces.Rook.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Rook.get_reachable_cells()</span></code></a></p></li>
+<li><p><a class="reference internal" href="figures.html#pieces.Knight.get_reachable_cells" title="pieces.Knight.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Knight.get_reachable_cells()</span></code></a></p></li>
+<li><p><a class="reference internal" href="figures.html#pieces.Bishop.get_reachable_cells" title="pieces.Bishop.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Bishop.get_reachable_cells()</span></code></a></p></li>
+<li><p><a class="reference internal" href="figures.html#pieces.Queen.get_reachable_cells" title="pieces.Queen.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Queen.get_reachable_cells()</span></code></a></p></li>
+<li><p><a class="reference internal" href="figures.html#pieces.King.get_reachable_cells" title="pieces.King.get_reachable_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">King.get_reachable_cells()</span></code></a></p></li>
+</ol>
+<p>Diese Methoden müssen <strong>nicht prüfen</strong>, ob der eigene König danach im Schach steht – das übernimmt später <a class="reference internal" href="figures.html#pieces.Piece.get_valid_cells" title="pieces.Piece.get_valid_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_valid_cells()</span></code></a>.</p>
+</section>
+<section id="phase-3-figurenlogik-und-spielfluss">
+<h2>Phase 3: Figurenlogik und Spielfluss<a class="headerlink" href="#phase-3-figurenlogik-und-spielfluss" title="Link to this heading"></a></h2>
+<ol class="arabic simple" start="11">
+<li><p><a class="reference internal" href="figures.html#pieces.Piece.get_valid_cells" title="pieces.Piece.get_valid_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Piece.get_valid_cells()</span></code></a>
+- Kombiniert <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_reachable_cells</span></code> mit einer Prüfung auf Schach.
+- Nutzt temporäres Umplatzieren auf dem Brett.
+- <strong>Komplexität</strong>: mittel bis hoch, da Zustand zwischengespeichert und wiederhergestellt werden muss.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.iterate_cells_with_pieces" title="board.Board.iterate_cells_with_pieces"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Board.iterate_cells_with_pieces()</span></code></a>    - Generator für alle Figuren einer Farbe.
+- Wird für Bewertung und Mini-Max benötigt.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.find_king" title="board.Board.find_king"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Board.find_king()</span></code></a>
+- Sucht die Königsfigur einer bestimmten Farbe.
+- Grundlage für Schachprüfung.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.is_king_check" title="board.Board.is_king_check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Board.is_king_check()</span></code></a>
+- Prüft, ob ein König im Schach steht.
+- Nutzt vorherige Methoden für Gegnerreichweiten.</p></li>
+</ol>
+</section>
+<section id="phase-4-bewertung-und-ki">
+<h2>Phase 4: Bewertung und KI<a class="headerlink" href="#phase-4-bewertung-und-ki" title="Link to this heading"></a></h2>
+<ol class="arabic simple" start="15">
+<li><p><a class="reference internal" href="figures.html#pieces.Piece.evaluate" title="pieces.Piece.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Piece.evaluate()</span></code></a>
+- Bewertet die Stellung einer einzelnen Figur.
+- Nutzt z. B. Anzahl gültiger Züge, Bedrohungen etc.</p></li>
+<li><p><a class="reference internal" href="board.html#board.Board.evaluate" title="board.Board.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Board.evaluate()</span></code></a>
+- Aggregiert alle Bewertungen weißer und schwarzer Figuren.
+- Gibt eine numerische Bewertung der Gesamtstellung zurück.</p></li>
+</ol>
+</section>
+<section id="phase-5-mini-max-logik">
+<h2>Phase 5: Mini-Max-Logik<a class="headerlink" href="#phase-5-mini-max-logik" title="Link to this heading"></a></h2>
+<ol class="arabic simple" start="17">
+<li><p><a class="reference internal" href="engine.html#engine.evaluate_all_possible_moves" title="engine.evaluate_all_possible_moves"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_all_possible_moves()</span></code></a>
+- Erzeugt und bewertet alle möglichen Züge einer Farbe.
+- Nutzt fast alle vorhergehenden Methoden.</p></li>
+<li><p><a class="reference internal" href="engine.html#engine.minMax" title="engine.minMax"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minMax()</span></code></a>
+- Der rekursive Mini-Max-Algorithmus.
+- Komplexität hoch, rekursiv, mit Zustandsänderung.</p></li>
+</ol>
+</section>
+<section id="uberblick">
+<h2>Überblick<a class="headerlink" href="#uberblick" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TD
+    step1[is_valid_cell] --&gt; step2[cell_is_valid_and_empty]
+    step2 --&gt; step3[piece_can_enter_cell]
+    step2 --&gt; step4[piece_can_hit_on_cell]
+
+    step3 --&gt; pawnReach[Pawn.get_reachable_cells]
+    step3 --&gt; rookReach[Rook.get_reachable_cells]
+    step3 --&gt; knightReach[Knight.get_reachable_cells]
+    step3 --&gt; bishopReach[Bishop.get_reachable_cells]
+    step3 --&gt; queenReach[Queen.get_reachable_cells]
+    step3 --&gt; kingReach[King.get_reachable_cells]
+
+    pawnReach --&gt; validCells[get_valid_cells]
+    rookReach --&gt; validCells
+    knightReach --&gt; validCells
+    bishopReach --&gt; validCells
+    queenReach --&gt; validCells
+    kingReach --&gt; validCells
+
+    validCells --&gt; iterate[iterate_cells_with_pieces]
+    iterate --&gt; findKing[find_king]
+    findKing --&gt; isCheck[is_king_check]
+
+    isCheck --&gt; evalPiece[Piece.evaluate]
+    evalPiece --&gt; evalBoard[Board.evaluate]
+
+    evalBoard --&gt; moveEval[evaluate_all_possible_moves]
+    moveEval --&gt; miniMax[minMax]
+    </pre></section>
+<section id="zusatzliche-hinweise">
+<h2>Zusätzliche Hinweise<a class="headerlink" href="#zusatzliche-hinweise" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fangt <strong>nicht mitten in der Mini-Max-Logik</strong> an, wenn die Bewegungs- und Prüfmethoden noch nicht korrekt funktionieren.</p></li>
+<li><p>Testet jede Methode <strong>isoliert</strong>, bevor ihr sie in größere Strukturen einbaut.</p></li>
+<li><p>Nutzt Zwischenausgaben (<cite>print()</cite>) und einfache Testszenarien, um eure Implementierung schrittweise zu verifizieren.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="engine.html" class="btn btn-neutral float-left" title="Die Schachengine mit Mini-Max-Suche" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="setup.html" class="btn btn-neutral float-right" title="Einrichtung der Python-Umgebung" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Die Schachengine mit Mini-Max-Suche &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Implementierungsreihenfolge der TODO-Methoden" href="reihenfolge.html" />
+    <link rel="prev" title="Einleitung: Objektorientierte Modellierung der Schachfiguren" href="figures.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="figures.html">Die Figuren</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Die Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#struktur-und-komponenten">Struktur und Komponenten</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#algorithmische-idee">Algorithmische Idee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#leistungsoptimierung">Leistungsoptimierung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fazit">Fazit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#die-kern-methoden-der-engine">Die Kern-Methoden der Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#engine.evaluate_all_possible_moves"><code class="docutils literal notranslate"><span class="pre">evaluate_all_possible_moves()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#engine.minMax"><code class="docutils literal notranslate"><span class="pre">minMax()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-minmaxarg">Reference - MinMaxArg</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#engine.MinMaxArg"><code class="docutils literal notranslate"><span class="pre">MinMaxArg</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#engine.MinMaxArg.next"><code class="docutils literal notranslate"><span class="pre">MinMaxArg.next()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-move">Reference - Move</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#engine.Move"><code class="docutils literal notranslate"><span class="pre">Move</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hilfsmethoden">Hilfsmethoden</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#engine.minMax_cached"><code class="docutils literal notranslate"><span class="pre">minMax_cached()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#engine.suggest_move"><code class="docutils literal notranslate"><span class="pre">suggest_move()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Die Schachengine mit Mini-Max-Suche</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/engine.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="die-schachengine-mit-mini-max-suche">
+<h1>Die Schachengine mit Mini-Max-Suche<a class="headerlink" href="#die-schachengine-mit-mini-max-suche" title="Link to this heading"></a></h1>
+<p>Die hier implementierte <strong>Schachengine</strong> stellt das zentrale Modul zur automatisierten Entscheidungsfindung in eurem Schachcomputer dar. Sie basiert auf dem klassischen <strong>Mini-Max-Algorithmus</strong>, einem fundamentalen Konzept der Spieltheorie, das systematisch nach dem optimalen Zug für eine Spielfigur sucht. Dabei geht der Algorithmus davon aus, dass sowohl der eigene als auch der gegnerische Spieler stets rational und optimal agieren.</p>
+<p>Ziel ist es, für jede gegebene Spielsituation den bestmöglichen Zug zu finden – und zwar unter Einbezug der <strong>potenziellen Antworten des Gegners</strong>. Dies geschieht rekursiv, indem der Spielbaum bis zu einer konfigurierbaren Tiefe durchsucht wird.</p>
+<section id="struktur-und-komponenten">
+<h2>Struktur und Komponenten<a class="headerlink" href="#struktur-und-komponenten" title="Link to this heading"></a></h2>
+<p>Die Engine setzt sich aus mehreren Schlüsselkomponenten zusammen:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#engine.MinMaxArg" title="engine.MinMaxArg"><code class="xref py py-class docutils literal notranslate"><span class="pre">MinMaxArg</span></code></a>: Kapselt die aktuelle Suchtiefe und die Spielerfarbe (weiß oder schwarz). Dient als Steuerstruktur für den rekursiven Ablauf der Suche.</p></li>
+<li><p><a class="reference internal" href="#engine.Move" title="engine.Move"><code class="xref py py-class docutils literal notranslate"><span class="pre">Move</span></code></a>: Repräsentiert einen möglichen Zug samt zugehöriger Bewertung (Score). Wird zur Ergebnisübermittlung und Anzeige genutzt.</p></li>
+<li><p><a class="reference internal" href="#engine.evaluate_all_possible_moves" title="engine.evaluate_all_possible_moves"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_all_possible_moves</span></code></a>: Bewertet alle legalen Züge für die aktuelle Farbe auf Basis der <cite>evaluate()</cite>-Funktion des Bretts. Simuliert jeden Zug temporär, analysiert die Stellung und verwirft sie danach wieder.</p></li>
+<li><p><a class="reference internal" href="#engine.minMax" title="engine.minMax"><code class="xref py py-func docutils literal notranslate"><span class="pre">minMax</span></code></a>: Kern des rekursiven Mini-Max-Algorithmus. Er simuliert eigene Züge und prüft rekursiv die besten Antworten des Gegners, um daraus den besten Gesamtzug abzuleiten.</p></li>
+<li><p><a class="reference internal" href="#engine.minMax_cached" title="engine.minMax_cached"><code class="xref py py-func docutils literal notranslate"><span class="pre">minMax_cached</span></code></a>: Erweiterung des Standard-Mini-Max mit <strong>Caching</strong>. Doppelte Berechnungen identischer Spielstellungen werden vermieden, was zu erheblichen Performancegewinnen führt.</p></li>
+<li><p><a class="reference internal" href="#engine.suggest_move" title="engine.suggest_move"><code class="xref py py-func docutils literal notranslate"><span class="pre">suggest_move</span></code></a>: Einstiegspunkt für die Engine. Startet den Suchprozess und liefert einen spielbaren Zug zurück.</p></li>
+</ul>
+</section>
+<section id="algorithmische-idee">
+<h2>Algorithmische Idee<a class="headerlink" href="#algorithmische-idee" title="Link to this heading"></a></h2>
+<p>Das Grundprinzip des Mini-Max-Algorithmus ist einfach, aber wirkungsvoll:</p>
+<ol class="arabic simple">
+<li><p><strong>Simulation</strong>: Für jeden legalen Zug wird der resultierende Spielzustand simuliert.</p></li>
+<li><p><strong>Rekursion</strong>: Der Gegnerzug wird rekursiv ebenfalls mit Mini-Max simuliert.</p></li>
+<li><p><strong>Bewertung</strong>: Die resultierenden Stellungen werden numerisch bewertet (immer aus Sicht von Weiß).</p></li>
+<li><p><strong>Auswahl</strong>: Der Zug, der langfristig zur besten Bewertung führt, wird zurückgegeben.</p></li>
+</ol>
+<p>Dabei wird zwischen zwei Modi unterschieden:</p>
+<ul class="simple">
+<li><p><strong>Maximierer</strong> (z. B. Weiß): Wählt den Zug mit dem höchsten Score.</p></li>
+<li><p><strong>Minimierer</strong> (z. B. Schwarz): Wählt den Zug mit dem niedrigsten Score.</p></li>
+</ul>
+<p>Die Bewertung basiert auf der <cite>Board.evaluate()</cite>-Funktion, welche das Material, Mobilität und taktische Motive (z. B. Bedrohungen) berücksichtigt.</p>
+</section>
+<section id="leistungsoptimierung">
+<h2>Leistungsoptimierung<a class="headerlink" href="#leistungsoptimierung" title="Link to this heading"></a></h2>
+<p>Um den hohen Rechenaufwand zu reduzieren, implementiert die Engine ein <strong>Hash-basiertes Caching</strong>: Spielstellungen werden eindeutig identifiziert und einmal berechnete Bewertungen gespeichert. So lassen sich insbesondere in tieferen Suchtiefen erhebliche <strong>Performancegewinne</strong> erzielen.</p>
+<p>Außerdem werden in der letzten Phase der Suche <strong>zufällige Elemente</strong> eingeführt, um die Vorhersagbarkeit zu verringern und die Spielvielfalt zu erhöhen (z. B. Zufallsauswahl aus gleichwertigen Top-Zügen).</p>
+</section>
+<section id="fazit">
+<h2>Fazit<a class="headerlink" href="#fazit" title="Link to this heading"></a></h2>
+<p>Diese Schachengine bietet eine robuste, nachvollziehbare und erweiterbare Grundlage für KI-gesteuertes Schachspiel. Sie verbindet algorithmische Eleganz mit praktischer Spielstärke – und bildet damit den <strong>entscheidenden Baustein</strong> für euren eigenen Schachcomputer.</p>
+</section>
+<section id="die-kern-methoden-der-engine">
+<h2>Die Kern-Methoden der Engine<a class="headerlink" href="#die-kern-methoden-der-engine" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="engine.evaluate_all_possible_moves">
+<span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">evaluate_all_possible_moves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minMaxArg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximumNumberOfMoves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#evaluate_all_possible_moves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.evaluate_all_possible_moves" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>:
+This method must evaluate all possible moves from all pieces of the current color.</p>
+<p>So if minMaxArg.playAsWhite is True, all possible moves of all white pieces must be evaluated.
+And if minMaxArg.playAsWhite is False, all possible moves of all black pieces must be evaluated.</p>
+<p>Iterate over all cells with pieces on them by calling the <a class="reference internal" href="board.html#board.Board.iterate_cells_with_pieces" title="board.Board.iterate_cells_with_pieces"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iterate_cells_with_pieces</span></code></a> method. 
+For each piece, retrieve all valid moves by calling the <a class="reference internal" href="figures.html#pieces.Piece.get_valid_cells" title="pieces.Piece.get_valid_cells"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_valid_cells</span></code></a> method of that piece.</p>
+<p>In order to evaluate a valid move, first you need to place that piece on the respective cell. Call the <a class="reference internal" href="board.html#board.BoardBase.set_cell" title="board.BoardBase.set_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_cell</span></code></a> method 
+to do so. Before doing so, remember the cell the piece is currently placed on as you will need to place it back later.
+Because placing a piece on a new cell could potential hit (and thus remove) an opposing piece currently placed on this cell, 
+you need to remember the piece on the target cell as well. Call <a class="reference internal" href="board.html#board.BoardBase.get_cell" title="board.BoardBase.get_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cell</span></code></a> to retrieve that piece and store it in a variable.</p>
+<p>After the new board configuration is set in place, call the <a class="reference internal" href="board.html#board.Board.evaluate" title="board.Board.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate</span></code></a> method. You can use the 
+<a class="reference internal" href="#engine.Move" title="engine.Move"><code class="xref py py-class docutils literal notranslate"><span class="pre">Move</span></code></a> class to store the move (piece and target cell) alongside its achieved evaluation score in a list.</p>
+<p>Restore the original board configuration by placing the piece in its original cell and restoring any potentially removed piece before 
+moving on to the next move or piece.</p>
+<p>Remember the <a class="reference internal" href="board.html#board.Board.evaluate" title="board.Board.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate</span></code></a> method always evaluates from WHITEs perspective, so a higher evaluation
+relates to a better position for WHITE.</p>
+<p>Moves must be sorted with respect o the scalar evaluation according to the minMax scheme. 
+So if minMaxArg.playAsWhite is True, the moves must be sorted in <em>descending</em> order, so the best evaluated move for white is in array position 0.
+So if minMaxArg.playAsWhite is False, the moves must be sorted in <em>ascending</em> order, so the worst evaluated move for white is in array position 0.</p>
+<p>Use the lists sort method and provide a proper key to the sorting algorithm, such that it sorts the moves according to the achieved score.</p>
+<p>After sorting, a maximum number of moves as provided by the respective parameter must be returned. If there are 
+more moves possible (in most situations there are), only return the top (or worst). Hint: Slice the list after sorting.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="engine.minMax">
+<span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">minMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minMaxArg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#minMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.minMax" title="Link to this definition"></a></dt>
+<dd><p><strong>TODO</strong>:
+This method implement the core mini-max search algorithm.
+The minMaxArg contain information about whether we are currently 
+playing as white or black as well as the remaining search depth.</p>
+<p>If minMaxArg.depth equals 1, no additional moves will be considered and
+the best evaluated move for the current board configuration should be 
+returned. If, however, minMaxArg.depth is greater than 1, for each possible
+move of the current color, all answering moves of the opposite color need 
+to be considered.</p>
+<p><em>HINT</em>: Start by calling <a class="reference internal" href="#engine.evaluate_all_possible_moves" title="engine.evaluate_all_possible_moves"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_all_possible_moves</span></code></a>
+with the provided board and minMaxArg in order to receive a list of evaluated moves.
+Note that the list is already sorted and contains only the best possible moves for the current color. 
+This means if white is playing, the returned list will contain the best moves for white to make
+whereas if black is playing, the returned list will contain the best moves for black to make first.</p>
+<p>You will need to handle the special case that there are no possible moves left,
+meaning the <a class="reference internal" href="#engine.evaluate_all_possible_moves" title="engine.evaluate_all_possible_moves"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_all_possible_moves</span></code></a>
+method returns an empty list. If there are no possible moves left, this means
+the current color has lost the game. Indicate that by returning an instance of the 
+<a class="reference internal" href="#engine.Move" title="engine.Move"><code class="xref py py-class docutils literal notranslate"><span class="pre">Move</span></code></a> class where you set the score attribute to a very high or very low value
+(remember: Always think from whites perspective!)</p>
+<p>If the remaining search depth is greater than 1 (minMaxArg.depth &gt; 1),
+iterate over all possible moves. Implement each move by placing the piece in question on the respective cell. 
+Call the <a class="reference internal" href="board.html#board.BoardBase.set_cell" title="board.BoardBase.set_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_cell</span></code></a> method 
+to do so. Before doing so, remember the cell the piece is currently placed on as you will need to place it back later.
+Because placing a piece on a new cell could potential hit (and thus remove) an opposing piece currently placed on this cell, 
+you need to remember the piece on the target cell as well. Call <a class="reference internal" href="board.html#board.BoardBase.get_cell" title="board.BoardBase.get_cell"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cell</span></code></a> 
+to retrieve that piece and store it in a variable.</p>
+<p>After the new board configuration is set in place, 
+call the <a class="reference internal" href="#engine.minMax_cached" title="engine.minMax_cached"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minMax_cached</span></code></a> method
+with the next minMaxArg (call <a class="reference internal" href="#engine.MinMaxArg.next" title="engine.MinMaxArg.next"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next</span></code></a>)</p>
+<p>Overwrite the current moves score with the result from the recursive call.</p>
+<p>Restore the original board configuration by placing the piece in its original cell and restoring any potentially removed piece before 
+moving on to the next move.</p>
+<p>After all moves and their counter-moves have been evaluated sort the list
+again in the correct order according to the (new) scores. If playing as white
+(minMaxArg.playAsWhite == True), you need to sort in descending order (highest ranked move first)
+whereas if playing as black (minMaxArg.playAsBlack == False), you need to sort
+in ascending order (lowest ranked move first). Use the lists sort method and
+define a proper key function to implement the needed search.</p>
+<p>In the most basic implementation of the algorithm return the best move after sorting.</p>
+<p><strong>NOTE</strong>: You can improve the replayability of your chess engine a bit
+if you add some randomness to the evaluation of moves. For example, you 
+can randomly increment and decrement each evaluation score. Alternatively
+you can return a random move out of the best three instead of simply the best one.</p>
+<p>Feel free to experiment with this once you have the core algorithm properly implemented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>board</strong> (<a class="reference internal" href="board.html#board.Board" title="board.Board"><code class="xref py py-class docutils literal notranslate"><span class="pre">board.Board</span></code></a>) – Reference to the board we need to play on</p></li>
+<li><p><strong>minMaxArg</strong> (<a class="reference internal" href="#engine.MinMaxArg" title="engine.MinMaxArg"><code class="xref py py-class docutils literal notranslate"><span class="pre">MinMaxArg</span></code></a>) – The combined arguments for the mini-max search algorithm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the best move to make in the current situation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#engine.Move" title="engine.Move"><code class="xref py py-class docutils literal notranslate"><span class="pre">Move</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="reference-minmaxarg">
+<span id="id1"></span><h2>Reference - MinMaxArg<a class="headerlink" href="#reference-minmaxarg" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="engine.MinMaxArg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">MinMaxArg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playAsWhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#MinMaxArg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.MinMaxArg" title="Link to this definition"></a></dt>
+<dd><p>Helper Class for the MinMax Algorithm.
+This class stores the current search depth and whether we are playing as white or black in this stage.</p>
+<p>Note: You don´t need to implement anything in this case, you can use it in the MinMax Algorithm as you seem fit.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="engine.MinMaxArg.next">
+<span class="sig-name descname"><span class="pre">next</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#MinMaxArg.next"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.MinMaxArg.next" title="Link to this definition"></a></dt>
+<dd><p>Provides the next stage of the MinMax Algorithm by reducing the depth by one and toggling playAsWhite</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="reference-move">
+<span id="id2"></span><h2>Reference - Move<a class="headerlink" href="#reference-move" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="engine.Move">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">Move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piece</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#Move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.Move" title="Link to this definition"></a></dt>
+<dd><p>Helper class to store an evaluated move for the MinMax Algorithm. 
+This class contains the piece that should be moved as well as the cell it should move into alongside with the evaluation score for this move.</p>
+<p>Note: You don´t need to implement anything in this case, you can use it in the MinMax Algorithm as you seem fit.</p>
+</dd></dl>
+
+</section>
+<section id="hilfsmethoden">
+<h2>Hilfsmethoden<a class="headerlink" href="#hilfsmethoden" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="engine.minMax_cached">
+<span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">minMax_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minMaxArg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#minMax_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.minMax_cached" title="Link to this definition"></a></dt>
+<dd><p>A cached version of the minMax method. This methods caches results
+based on its parameters. If called again with a known board configuration
+and minMaxArgs, the result is taken from the cache instead of repeating
+the mini-max algorithm again. This can save computation time as
+it avoid to repeat evaluations over and over again.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="engine.suggest_move">
+<span class="sig-prename descclassname"><span class="pre">engine.</span></span><span class="sig-name descname"><span class="pre">suggest_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engine.html#suggest_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engine.suggest_move" title="Link to this definition"></a></dt>
+<dd><p>Helper function to start the mini-max algorithm.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="figures.html" class="btn btn-neutral float-left" title="Einleitung: Objektorientierte Modellierung der Schachfiguren" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reihenfolge.html" class="btn btn-neutral float-right" title="Implementierungsreihenfolge der TODO-Methoden" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

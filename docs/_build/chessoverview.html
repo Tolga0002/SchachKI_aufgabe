@@ -1,0 +1,207 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schach: Ein Spiel strategischer Tiefe &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max" href="chessengine.html" />
+    <link rel="prev" title="Programmierung DSKI - Schachengine documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Das Schachspiel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#uberblick">Überblick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ursprung-und-geschichte">Ursprung und Geschichte</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ziel-des-spiels">Ziel des Spiels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spielaufbau">Spielaufbau</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bewegungsregeln">Bewegungsregeln</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sonderregeln">Sonderregeln</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#strategische-tiefe">Strategische Tiefe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modernes-schach">Modernes Schach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anfangsaufstellung">Anfangsaufstellung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fazit">Fazit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine.html">Die Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Schach: Ein Spiel strategischer Tiefe</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chessoverview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="schach-ein-spiel-strategischer-tiefe">
+<h1>Schach: Ein Spiel strategischer Tiefe<a class="headerlink" href="#schach-ein-spiel-strategischer-tiefe" title="Link to this heading"></a></h1>
+<section id="uberblick">
+<h2>Überblick<a class="headerlink" href="#uberblick" title="Link to this heading"></a></h2>
+<p><strong>Schach</strong> ist ein Strategiespiel für zwei Spieler, das seit über einem Jahrtausend existiert. Gespielt wird es auf einem 8x8-Brett, dem sogenannten <strong>Schachbrett</strong>. Zwei Armeen – Weiß und Schwarz – stehen sich gegenüber in einem Kampf voller Intelligenz, Weitblick und taktischem Geschick. Ziel ist es, den <strong>König</strong> des Gegners schachmatt zu setzen.</p>
+</section>
+<section id="ursprung-und-geschichte">
+<h2>Ursprung und Geschichte<a class="headerlink" href="#ursprung-und-geschichte" title="Link to this heading"></a></h2>
+<p>Das Spiel Schach entwickelte sich aus dem indischen Spiel <em>Chaturanga</em>, das im 6. Jahrhundert n. Chr. gespielt wurde. Es gelangte über Persien in die islamische Welt und verbreitete sich bis ins 10. Jahrhundert nach Europa. Die heutigen Regeln wurden besonders in der Renaissancezeit geprägt, insbesondere durch die Einführung der mächtigen <strong>Dame</strong> und der erweiterten Bewegungen der Läufer.</p>
+</section>
+<section id="ziel-des-spiels">
+<h2>Ziel des Spiels<a class="headerlink" href="#ziel-des-spiels" title="Link to this heading"></a></h2>
+<p>Das Hauptziel im Schach ist es, den gegnerischen <strong>König schachmatt</strong> zu setzen. Dies bedeutet, dass der König angegriffen wird (<em>Schach</em>) und es keinen legalen Zug gibt, um seine Gefangennahme im nächsten Zug zu verhindern.</p>
+</section>
+<section id="spielaufbau">
+<h2>Spielaufbau<a class="headerlink" href="#spielaufbau" title="Link to this heading"></a></h2>
+<p>Zu Beginn verfügt jeder Spieler über 16 Figuren:</p>
+<ul class="simple">
+<li><p>1 König</p></li>
+<li><p>1 Dame</p></li>
+<li><p>2 Türme</p></li>
+<li><p>2 Läufer</p></li>
+<li><p>2 Springer</p></li>
+<li><p>8 Bauern</p></li>
+</ul>
+<p>Jede Figur hat ein eigenes, spezifisches Bewegungsmuster. Weiß beginnt das Spiel, danach wechseln sich die Spieler ab.</p>
+</section>
+<section id="bewegungsregeln">
+<h2>Bewegungsregeln<a class="headerlink" href="#bewegungsregeln" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>König</strong>: Ein Feld in jede Richtung.</p></li>
+<li><p><strong>Dame</strong>: Beliebig weit vertikal, horizontal oder diagonal.</p></li>
+<li><p><strong>Turm</strong>: Beliebig weit vertikal oder horizontal.</p></li>
+<li><p><strong>Läufer</strong>: Beliebig weit diagonal.</p></li>
+<li><p><strong>Springer</strong>: In L-Form: zwei Felder in eine Richtung, dann ein Feld rechtwinklig.</p></li>
+<li><p><strong>Bauer</strong>: Ein Feld vorwärts, beim ersten Zug zwei Felder möglich; schlägt diagonal.</p></li>
+</ul>
+</section>
+<section id="sonderregeln">
+<h2>Sonderregeln<a class="headerlink" href="#sonderregeln" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Rochade</strong>: Eine Schutzbewegung von König und Turm.</p></li>
+<li><p><strong>En Passant</strong>: Eine spezielle Schlagmöglichkeit des Bauern.</p></li>
+<li><p><strong>Umwandlung</strong>: Ein Bauer, der die gegnerische Grundreihe erreicht, wird in eine andere Figur (meist Dame) umgewandelt.</p></li>
+</ul>
+<p><strong>Hinweis</strong>: Im Rahmen dieser Prüfungsleistung und der umzusetzenden eigenen Implementierung einer Schachengine brauchen Sie diese Sonderregeln nicht zu berücksichtigen. Das bedeutet konkret das das Schlagen “en Passant” sowie die Rochade nicht verkommen können.  Auch eine Umwandlung eines Bauern findet nicht statt. Dies sind Vereinfachungen um die Komplexität des Problems gering zu halten.</p>
+</section>
+<section id="strategische-tiefe">
+<h2>Strategische Tiefe<a class="headerlink" href="#strategische-tiefe" title="Link to this heading"></a></h2>
+<p>Schach ist für seine strategische Komplexität berühmt. Spieler müssen Folgendes berücksichtigen:</p>
+<ul class="simple">
+<li><p><strong>Eröffnungstheorie</strong>: Figurenentwicklung und Kontrolle des Zentrums.</p></li>
+<li><p><strong>Taktik im Mittelspiel</strong>: Kombinationen wie Gabeln, Fesselungen und Spieße.</p></li>
+<li><p><strong>Endspieltechnik</strong>: Einen Vorteil mit wenigen Figuren in einen Sieg umwandeln.</p></li>
+</ul>
+</section>
+<section id="modernes-schach">
+<h2>Modernes Schach<a class="headerlink" href="#modernes-schach" title="Link to this heading"></a></h2>
+<p>Mit dem Aufkommen von Computern hat Schach eine neue Ära betreten:</p>
+<ul class="simple">
+<li><p><strong>Schachprogramme</strong> wie Stockfish analysieren Stellungen mit übermenschlicher Präzision.</p></li>
+<li><p><strong>Online-Plattformen</strong> wie Lichess und Chess.com ermöglichen tägliche Millionenpartien.</p></li>
+<li><p><strong>Turnierschach</strong> wird von der FIDE organisiert, mit globalen Wettbewerben und Weltmeisterschaften.</p></li>
+</ul>
+</section>
+<section id="anfangsaufstellung">
+<h2>Anfangsaufstellung<a class="headerlink" href="#anfangsaufstellung" title="Link to this heading"></a></h2>
+<p>Das Schachbrett wird so ausgerichtet, dass das rechte Eckfeld eines jeden Spielers ein weißes Feld ist („weißes Feld rechts“). Die zweite Reihe (2. Reihe für Weiß, 7. Reihe für Schwarz) wird mit den acht Bauern besetzt.</p>
+<p>In der ersten Reihe stehen – von links nach rechts – folgende Figuren:</p>
+<ul class="simple">
+<li><p><strong>Turm</strong>, <strong>Springer</strong>, <strong>Läufer</strong>, <strong>Dame</strong>, <strong>König</strong>, <strong>Läufer</strong>, <strong>Springer</strong>, <strong>Turm</strong></p></li>
+</ul>
+<p>Dabei steht die Dame immer auf dem Feld ihrer eigenen Farbe: die weiße Dame auf einem weißen Feld (d1), die schwarze Dame auf einem schwarzen Feld (d8). Der König steht direkt daneben auf dem verbleibenden Zentralfeld (e1 bzw. e8).
+Weiß beginnt das Spiel, danach wechseln sich die Spieler ab.</p>
+</section>
+<section id="fazit">
+<h2>Fazit<a class="headerlink" href="#fazit" title="Link to this heading"></a></h2>
+<p>Schach ist eines der angesehensten und geistig anspruchsvollsten Spiele der Geschichte. Ob als Freizeitvergnügen oder im Wettkampf – es fordert den Verstand, schärft die Logik und bietet eine universelle Sprache der Strategie.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Programmierung DSKI - Schachengine documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chessengine.html" class="btn btn-neutral float-right" title="Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

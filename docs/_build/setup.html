@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Einrichtung der Python-Umgebung &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Implementierungsreihenfolge der TODO-Methoden" href="reihenfolge.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine.html">Die Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Einrichtung der Python-Umgebung</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#voraussetzungen">Voraussetzungen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hinweise-zur-ide">Hinweise zur IDE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests-und-erste-ausfuhrung">Tests und erste Ausführung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fehlerbehandlung">Fehlerbehandlung</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#testausfuhrung">Testausführung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testausgabe-interpretieren">Testausgabe interpretieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testabdeckung">Testabdeckung</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#manuelles-spiel-mensch-gegen-mensch">Manuelles Spiel (Mensch gegen Mensch)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spiel-gegen-den-computer-mensch-gegen-ki">Spiel gegen den Computer (Mensch gegen KI)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Einrichtung der Python-Umgebung</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="einrichtung-der-python-umgebung">
+<h1>Einrichtung der Python-Umgebung<a class="headerlink" href="#einrichtung-der-python-umgebung" title="Link to this heading"></a></h1>
+<p>Damit ihr das Schachprojekt lokal entwickeln und ausführen könnt, müsst ihr eine geeignete Python-Umgebung einrichten. Im Folgenden findet ihr eine Schritt-für-Schritt-Anleitung zur Installation aller benötigten Werkzeuge und Bibliotheken.</p>
+<section id="voraussetzungen">
+<h2>Voraussetzungen<a class="headerlink" href="#voraussetzungen" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Python 3.11 oder höher</strong> muss installiert sein.</p></li>
+<li><p>Ein Terminal / eine Shell (z. B. <cite>cmd</cite>, PowerShell, Terminal, oder VSCode-Terminal)</p></li>
+<li><p>Optional, aber empfohlen: Virtuelle Umgebung (pyenv)</p></li>
+</ul>
+<ol class="arabic">
+<li><p>Wechselt in das Verzeichnis eures Projekts:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>pfad/zum/projekt
+</pre></div>
+</div>
+</li>
+<li><p>Installiert die benötigten Pakete:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>numpy<span class="w"> </span>pygame<span class="w"> </span>unittest<span class="w"> </span>unittest-prettify
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="hinweise-zur-ide">
+<h2>Hinweise zur IDE<a class="headerlink" href="#hinweise-zur-ide" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Für das Projekt empfehlen wir <strong>Visual Studio Code</strong>, <strong>PyCharm</strong> oder <strong>Thonny</strong>.</p></li>
+<li><p>Achtet darauf, dass in der IDE auch die richtige Python-Umgebung (virtuell oder systemweit) ausgewählt ist.</p></li>
+</ul>
+</section>
+<section id="tests-und-erste-ausfuhrung">
+<h2>Tests und erste Ausführung<a class="headerlink" href="#tests-und-erste-ausfuhrung" title="Link to this heading"></a></h2>
+<p>Nach der Installation könnt ihr prüfen, ob das Projekt lauffähig ist:</p>
+<ol class="arabic">
+<li><p>Startet Python:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python
+</pre></div>
+</div>
+</li>
+<li><p>Importiert eine Beispielklasse:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">board</span><span class="w"> </span><span class="kn">import</span> <span class="n">Board</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">Board</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Beendet Python mit <cite>exit()</cite> oder <cite>Strg + D</cite>.</p></li>
+</ol>
+</section>
+<section id="fehlerbehandlung">
+<h2>Fehlerbehandlung<a class="headerlink" href="#fehlerbehandlung" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Falls <cite>ModuleNotFoundError</cite> auftaucht, überprüft:
+- Ist die virtuelle Umgebung aktiviert?
+- Wurde das Paket korrekt installiert?</p></li>
+<li><p>Bei Problemen mit <cite>numpy</cite>: Aktualisiert pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="ausfuhren-der-automatischen-tests">
+<h1>Ausführen der automatischen Tests<a class="headerlink" href="#ausfuhren-der-automatischen-tests" title="Link to this heading"></a></h1>
+<p>Um eure Implementierungen systematisch zu überprüfen, steht eine <strong>Testsuite</strong> zur Verfügung, die alle zentralen Methoden mit automatisierten <strong>Unit-Tests</strong> abdeckt.</p>
+<p>Diese Tests prüfen, ob ihr die <cite>TODO</cite>-Methoden korrekt umgesetzt habt – einschließlich Funktionalität, Rückgabewerte, und in vielen Fällen auch Randbedingungen. Sie liefern möglichst aussagekräftige Fehlermeldungen, um euch gezielt bei der Fehlersuche zu unterstützen.</p>
+<section id="testausfuhrung">
+<h2>Testausführung<a class="headerlink" href="#testausfuhrung" title="Link to this heading"></a></h2>
+<p>Sobald ihr eine oder mehrere Methoden implementiert habt, könnt ihr die Tests jederzeit ausführen:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>main.py<span class="w"> </span>--mode<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+<p>Dabei wird eine Reihe vordefinierter Tests durchlaufen, die auf allen Ebenen des Projekts ansetzen – von einfachen Gültigkeitsprüfungen (<cite>is_valid_cell</cite>) bis hin zur korrekten Funktionsweise des Mini-Max-Algorithmus.</p>
+</section>
+<section id="testausgabe-interpretieren">
+<h2>Testausgabe interpretieren<a class="headerlink" href="#testausgabe-interpretieren" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Erfolgreicher Test</strong>:</p></li>
+</ul>
+<p>Nachdem alle Methoden korrekt implementiert wurden laufen die Tests ohne Fehlermeldung durch:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python main.py --mode test
+
+🧪 Starte Unittests...
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 1.755s
+
+OK
+</pre></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Fehlgeschlagener Test</strong>:</p></li>
+</ul>
+<p>Ist eure Implementierung fehlerhaft oder unvollständig, erhaltet ihr eine
+möglichst sprechende Beschreibung des Fehlers.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python main.py --mode test
+
+🧪 Starte Unittests...
+............
+Testcase name:  Queen Movement Rules
+Movability wrongly implemented. In this configuration
+
+        8 . . . . . . . .
+        7 . . . . . . . .
+        6 . . . . . . . .
+        5 . r . Q . . K .
+        4 . . . . . . . .
+        3 . . . . . . . .
+        2 . . q . . . k .
+        1 . . . . . . . .
+          a b c d e f g h
+
+Queen on c2 (red) should be able to move to b2 (green).
+</pre></div>
+</div>
+</div></blockquote>
+<p>In diesem Fall wird euch (wenn sinnvoll) eine Erklärung mitgegeben, <strong>warum der Test fehlgeschlagen ist</strong> – etwa welche Eingabewerte verwendet wurden und was erwartet wurde.</p>
+</section>
+<section id="testabdeckung">
+<h2>Testabdeckung<a class="headerlink" href="#testabdeckung" title="Link to this heading"></a></h2>
+<p>Die Tests decken alle Methoden ab, die ihr gemäß Anleitung selbst implementieren müsst, darunter u. a.:</p>
+</section>
+</section>
+<section id="manuelles-spiel-und-spiel-gegen-den-computer">
+<h1>Manuelles Spiel und Spiel gegen den Computer<a class="headerlink" href="#manuelles-spiel-und-spiel-gegen-den-computer" title="Link to this heading"></a></h1>
+<section id="manuelles-spiel-mensch-gegen-mensch">
+<h2>Manuelles Spiel (Mensch gegen Mensch)<a class="headerlink" href="#manuelles-spiel-mensch-gegen-mensch" title="Link to this heading"></a></h2>
+<p>Bevor der Mini-Max Algorithmus implementiert ist kann man bereits
+manuell spielen. Dazu müssen jedoch die wichtigsten Methoden der Board und Pieces-Klassen
+korrekt implementiert sein. Um das Spiel im manuellen Modus zu starten gib folgenden Befehl auf der Konsole aus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">mode</span> <span class="n">manual</span>
+</pre></div>
+</div>
+</section>
+<section id="spiel-gegen-den-computer-mensch-gegen-ki">
+<h2>Spiel gegen den Computer (Mensch gegen KI)<a class="headerlink" href="#spiel-gegen-den-computer-mensch-gegen-ki" title="Link to this heading"></a></h2>
+<p>Um gegen den Computer zu spielen, starte das Spiel wie folgt</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">mode</span> <span class="n">ai</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reihenfolge.html" class="btn btn-neutral float-left" title="Implementierungsreihenfolge der TODO-Methoden" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

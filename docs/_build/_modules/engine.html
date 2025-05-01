@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>engine &mdash; Programmierung DSKI - Schachengine  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Programmierung DSKI - Schachengine
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chessoverview.html">Das Schachspiel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chessengine.html">Einleitung: Bau eines einfachen Schachcomputers mit Mini-Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chessengine.html#mini-max-algorithmus-im-detail">Mini-Max-Algorithmus im Detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../board.html">Das Brett</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../figures.html">Die Figuren</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine.html">Die Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reihenfolge.html">Eine sinnvolle Reihenfolge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Einrichtung der Python-Umgebung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html#ausfuhren-der-automatischen-tests">Ausführen der automatischen Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html#manuelles-spiel-und-spiel-gegen-den-computer">Manuelles Spiel und Spiel gegen den Computer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Programmierung DSKI - Schachengine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">engine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for engine</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">util</span><span class="w"> </span><span class="kn">import</span> <span class="n">map_piece_to_character</span><span class="p">,</span> <span class="n">cell_to_string</span>
+
+
+<span class="n">DEPTH</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<div class="viewcode-block" id="MinMaxArg">
+<a class="viewcode-back" href="../engine.html#engine.MinMaxArg">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MinMaxArg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Helper Class for the MinMax Algorithm.</span>
+<span class="sd">    This class stores the current search depth and whether we are playing as white or black in this stage. </span>
+
+<span class="sd">    Note: You don´t need to implement anything in this case, you can use it in the MinMax Algorithm as you seem fit. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">DEPTH</span><span class="p">,</span> <span class="n">playAsWhite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the class using the provided parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playAsWhite</span> <span class="o">=</span> <span class="n">playAsWhite</span>
+
+<div class="viewcode-block" id="MinMaxArg.next">
+<a class="viewcode-back" href="../engine.html#engine.MinMaxArg.next">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Provides the next stage of the MinMax Algorithm by reducing the depth by one and toggling playAsWhite</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">MinMaxArg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">playAsWhite</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Move">
+<a class="viewcode-back" href="../engine.html#engine.Move">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Move</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper class to store an evaluated move for the MinMax Algorithm. </span>
+<span class="sd">    This class contains the piece that should be moved as well as the cell it should move into alongside with the evaluation score for this move. </span>
+
+<span class="sd">    Note: You don´t need to implement anything in this case, you can use it in the MinMax Algorithm as you seem fit. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">score</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor initializes the class according to the provided parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">piece</span> <span class="o">=</span> <span class="n">piece</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper class to turn this move into a neat string representation following the official chess notation guidelines.</span>
+<span class="sd">        Note: This method does not properly indicate a check &quot;+&quot; or check-mate &quot;#&quot; in the notation as that would require a</span>
+<span class="sd">        deeper analysis of the resulting board configuration. However, it appends the evaluated score of this move just for reference. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fr</span> <span class="o">=</span> <span class="n">cell_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piece</span><span class="o">.</span><span class="n">cell</span><span class="p">)</span>
+        <span class="n">to</span> <span class="o">=</span> <span class="n">cell_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">)</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">piece</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">cell_is_valid_and_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">):</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">map_piece_to_character</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piece</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">fr</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="n">to</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+
+
+<div class="viewcode-block" id="evaluate_all_possible_moves">
+<a class="viewcode-back" href="../engine.html#engine.evaluate_all_possible_moves">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_all_possible_moves</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">minMaxArg</span><span class="p">,</span> <span class="n">maximumNumberOfMoves</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **TODO**:</span>
+<span class="sd">    This method must evaluate all possible moves from all pieces of the current color. </span>
+
+<span class="sd">    So if minMaxArg.playAsWhite is True, all possible moves of all white pieces must be evaluated.</span>
+<span class="sd">    And if minMaxArg.playAsWhite is False, all possible moves of all black pieces must be evaluated. </span>
+
+<span class="sd">    Iterate over all cells with pieces on them by calling the :py:meth:`iterate_cells_with_pieces &lt;board.Board.iterate_cells_with_pieces&gt;` method. </span>
+<span class="sd">    For each piece, retrieve all valid moves by calling the :py:meth:`get_valid_cells &lt;pieces.Piece.get_valid_cells&gt;` method of that piece. </span>
+
+<span class="sd">    In order to evaluate a valid move, first you need to place that piece on the respective cell. Call the :py:meth:`set_cell &lt;board.BoardBase.set_cell&gt;` method </span>
+<span class="sd">    to do so. Before doing so, remember the cell the piece is currently placed on as you will need to place it back later.</span>
+<span class="sd">    Because placing a piece on a new cell could potential hit (and thus remove) an opposing piece currently placed on this cell, </span>
+<span class="sd">    you need to remember the piece on the target cell as well. Call :py:meth:`get_cell &lt;board.BoardBase.get_cell&gt;` to retrieve that piece and store it in a variable.</span>
+
+<span class="sd">    After the new board configuration is set in place, call the :py:meth:`evaluate &lt;board.Board.evaluate&gt;` method. You can use the </span>
+<span class="sd">    :py:class:`Move` class to store the move (piece and target cell) alongside its achieved evaluation score in a list. </span>
+
+<span class="sd">    Restore the original board configuration by placing the piece in its original cell and restoring any potentially removed piece before </span>
+<span class="sd">    moving on to the next move or piece. </span>
+
+<span class="sd">    Remember the :py:meth:`evaluate &lt;board.Board.evaluate&gt;` method always evaluates from WHITEs perspective, so a higher evaluation</span>
+<span class="sd">    relates to a better position for WHITE. </span>
+
+<span class="sd">    Moves must be sorted with respect o the scalar evaluation according to the minMax scheme. </span>
+<span class="sd">    So if minMaxArg.playAsWhite is True, the moves must be sorted in *descending* order, so the best evaluated move for white is in array position 0.</span>
+<span class="sd">    So if minMaxArg.playAsWhite is False, the moves must be sorted in *ascending* order, so the worst evaluated move for white is in array position 0.</span>
+
+<span class="sd">    Use the lists sort method and provide a proper key to the sorting algorithm, such that it sorts the moves according to the achieved score. </span>
+<span class="sd">    </span>
+<span class="sd">    After sorting, a maximum number of moves as provided by the respective parameter must be returned. If there are </span>
+<span class="sd">    more moves possible (in most situations there are), only return the top (or worst). Hint: Slice the list after sorting. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Implement the method according to the above description</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="minMax">
+<a class="viewcode-back" href="../engine.html#engine.minMax">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">minMax</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">minMaxArg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **TODO**:</span>
+<span class="sd">    This method implement the core mini-max search algorithm.</span>
+<span class="sd">    The minMaxArg contain information about whether we are currently </span>
+<span class="sd">    playing as white or black as well as the remaining search depth. </span>
+
+<span class="sd">    If minMaxArg.depth equals 1, no additional moves will be considered and</span>
+<span class="sd">    the best evaluated move for the current board configuration should be </span>
+<span class="sd">    returned. If, however, minMaxArg.depth is greater than 1, for each possible</span>
+<span class="sd">    move of the current color, all answering moves of the opposite color need </span>
+<span class="sd">    to be considered. </span>
+
+<span class="sd">    *HINT*: Start by calling :py:func:`evaluate_all_possible_moves &lt;engine.evaluate_all_possible_moves&gt;`</span>
+<span class="sd">    with the provided board and minMaxArg in order to receive a list of evaluated moves.</span>
+<span class="sd">    Note that the list is already sorted and contains only the best possible moves for the current color. </span>
+<span class="sd">    This means if white is playing, the returned list will contain the best moves for white to make</span>
+<span class="sd">    whereas if black is playing, the returned list will contain the best moves for black to make first. </span>
+
+<span class="sd">    You will need to handle the special case that there are no possible moves left,</span>
+<span class="sd">    meaning the :py:func:`evaluate_all_possible_moves &lt;engine.evaluate_all_possible_moves&gt;`</span>
+<span class="sd">    method returns an empty list. If there are no possible moves left, this means</span>
+<span class="sd">    the current color has lost the game. Indicate that by returning an instance of the </span>
+<span class="sd">    :py:class:`Move` class where you set the score attribute to a very high or very low value</span>
+<span class="sd">    (remember: Always think from whites perspective!)</span>
+
+<span class="sd">    If the remaining search depth is greater than 1 (minMaxArg.depth &gt; 1),</span>
+<span class="sd">    iterate over all possible moves. Implement each move by placing the piece in question on the respective cell. </span>
+<span class="sd">    Call the :py:meth:`set_cell &lt;board.BoardBase.set_cell&gt;` method </span>
+<span class="sd">    to do so. Before doing so, remember the cell the piece is currently placed on as you will need to place it back later.</span>
+<span class="sd">    Because placing a piece on a new cell could potential hit (and thus remove) an opposing piece currently placed on this cell, </span>
+<span class="sd">    you need to remember the piece on the target cell as well. Call :py:meth:`get_cell &lt;board.BoardBase.get_cell&gt;` </span>
+<span class="sd">    to retrieve that piece and store it in a variable.</span>
+
+<span class="sd">    After the new board configuration is set in place, </span>
+<span class="sd">    call the :py:meth:`minMax_cached &lt;engine.minMax_cached&gt;` method</span>
+<span class="sd">    with the next minMaxArg (call :py:meth:`next &lt;engine.MinMaxArg.next&gt;`)</span>
+
+<span class="sd">    Overwrite the current moves score with the result from the recursive call.</span>
+<span class="sd">    </span>
+<span class="sd">    Restore the original board configuration by placing the piece in its original cell and restoring any potentially removed piece before </span>
+<span class="sd">    moving on to the next move. </span>
+
+<span class="sd">    After all moves and their counter-moves have been evaluated sort the list</span>
+<span class="sd">    again in the correct order according to the (new) scores. If playing as white</span>
+<span class="sd">    (minMaxArg.playAsWhite == True), you need to sort in descending order (highest ranked move first)</span>
+<span class="sd">    whereas if playing as black (minMaxArg.playAsBlack == False), you need to sort</span>
+<span class="sd">    in ascending order (lowest ranked move first). Use the lists sort method and</span>
+<span class="sd">    define a proper key function to implement the needed search. </span>
+
+<span class="sd">    In the most basic implementation of the algorithm return the best move after sorting. </span>
+
+<span class="sd">    **NOTE**: You can improve the replayability of your chess engine a bit</span>
+<span class="sd">    if you add some randomness to the evaluation of moves. For example, you </span>
+<span class="sd">    can randomly increment and decrement each evaluation score. Alternatively</span>
+<span class="sd">    you can return a random move out of the best three instead of simply the best one. </span>
+
+<span class="sd">    Feel free to experiment with this once you have the core algorithm properly implemented. </span>
+
+<span class="sd">    :param board: Reference to the board we need to play on</span>
+<span class="sd">    :type board: :py:class:`board.Board`</span>
+<span class="sd">    :param minMaxArg: The combined arguments for the mini-max search algorithm.</span>
+<span class="sd">    :type minMaxArg: :py:class:`MinMaxArg`</span>
+<span class="sd">    :return: Return the best move to make in the current situation.</span>
+<span class="sd">    :rtype: :py:class:`Move`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Implement the Mini-Max algorithm</span>
+    <span class="k">pass</span></div>
+
+
+
+
+
+
+<div class="viewcode-block" id="suggest_move">
+<a class="viewcode-back" href="../engine.html#engine.suggest_move">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">suggest_move</span><span class="p">(</span><span class="n">board</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to start the mini-max algorithm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">minMax_cached</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">MinMaxArg</span><span class="p">())</span></div>
+
+
+<span class="n">eval_cache</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">total_hits</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="minMax_cached">
+<a class="viewcode-back" href="../engine.html#engine.minMax_cached">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">minMax_cached</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">minMaxArg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A cached version of the minMax method. This methods caches results</span>
+<span class="sd">    based on its parameters. If called again with a known board configuration</span>
+<span class="sd">    and minMaxArgs, the result is taken from the cache instead of repeating</span>
+<span class="sd">    the mini-max algorithm again. This can save computation time as</span>
+<span class="sd">    it avoid to repeat evaluations over and over again. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">eval_cache</span><span class="p">,</span> <span class="n">total_hits</span>
+
+    <span class="c1"># Calculate a unique hash code for the current board position and search depth</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">minMaxArg</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">+</span> <span class="n">board</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="n">eval_cache</span><span class="p">:</span>
+        <span class="n">total_hits</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># print(f&quot;Cache hit! Cache has {len(eval_cache.keys())} entries with {total_hits} hits so far&quot;)</span>
+        <span class="k">return</span> <span class="n">eval_cache</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span>
+
+    <span class="c1"># Its not the cache so do the actual evaluation</span>
+    <span class="n">bestMove</span> <span class="o">=</span> <span class="n">minMax</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">minMaxArg</span><span class="p">)</span>
+
+    <span class="c1"># Cache it for later</span>
+    <span class="n">eval_cache</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">bestMove</span>
+    <span class="k">return</span> <span class="n">bestMove</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Prof. Dr. Dennis Müller.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -30,5 +30,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-
+html_theme_options = {
+    'canonical_url': '',
+}
 latex_engine = 'xelatex'  # oder 'xelatex', wenn du Unicode brauchst
+
+html_baseurl = 'https://dmu1981.github.io/SchachKI_aufgabe/'

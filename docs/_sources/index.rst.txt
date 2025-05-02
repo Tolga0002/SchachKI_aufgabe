@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Programmierung DSKI - Schachengine documentation
+Programmierung DSKI - Schachengine Dokumentation
 ================================================
 
 Herzlich Willkommen zu ihrem Studium an der Hochschule Düsseldorf. In diesem Kurs sollen sollen Sie die Grundlagen 
@@ -17,7 +17,7 @@ verpflichtenden Prüfungsleistung programmieren Sie dabei eine erste, eigene KI 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Inhalt:
 
    Das Schachspiel <chessoverview>
    Über Schachcomputer <chessengine>

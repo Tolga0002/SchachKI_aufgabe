@@ -5,6 +5,7 @@ from util import map_piece_to_character, cell_to_string
 
 DEPTH = 3
 
+#test von marlon
 
 class MinMaxArg:
     """ Helper Class for the MinMax Algorithm.

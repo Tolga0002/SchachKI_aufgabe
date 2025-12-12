@@ -15,7 +15,7 @@ def run_tests():
     if result.wasSuccessful():
         sys.exit(0)
     else:
-        sys.exit(1)
+        sys.exit(1) #hallo test
 
 def main():
     parser = argparse.ArgumentParser(

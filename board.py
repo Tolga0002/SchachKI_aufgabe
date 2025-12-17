@@ -293,8 +293,19 @@ class Board(BoardBase):
         being within the allowed range (0 to 7 inclusively).
         Don´t forget to handle the special case of "cell" being None. Return False in that case
         """
-        # TODO: Implement
-        pass
+        # TODO: Implement # Marlon hat hier bearbeitet
+       
+        # Unpack the tuple "cell" into "(row, col)"
+        row, col = cell
+
+        # Check if "row" and "col" are on the 8x8 bord
+        if row >= 0 and row <= 7 and col >= 0 and col <= 7:
+            return True
+        # Cell is not on the bord
+        else:
+            return False
+
+        #pass
 
     def cell_is_valid_and_empty(self, cell):
         """
@@ -304,8 +315,18 @@ class Board(BoardBase):
         You can use the "is_valid_cell()" Method to verify the cell is valid in the first place.
         If so, use "get_cell()" to retrieve the piece placed on it and return True if there is None
         """
-        # TODO: Implement
-        pass
+        # TODO: Implement # Marlon hat hier bearbeitet
+
+        # Checks if cell is valid
+        if self.is_valid_cell(cell) is False:
+            return False
+        # Checks if the cell is empty
+        elif self.get_cell(cell) is None:
+            return True
+        else:
+            return False
+
+        #pass
 
     def piece_can_enter_cell(self, piece, cell):
         """
@@ -322,8 +343,23 @@ class Board(BoardBase):
         If, however, there is another piece, it must be of opposing color. Check the other pieces "white" attribute and compare against
         the given piece "white" attribute.
         """
-        # TODO: Implement
-        pass
+        # TODO: Implement # Marlon hat hier bearbeitet
+
+        # Checks if cell is valid
+        if self.is_valid_cell(cell) is False:
+            return False
+        # Checks if cell is empty
+        elif self.get_cell(cell) is None:
+            return True
+        # Checks if piece is placed on it 
+        elif self.get_cell(cell) is not None:
+            # Checks if piece is white or black
+            if self.is_white() is False:
+                return True
+            else:
+                return False
+
+        #pass
 
     def piece_can_hit_on_cell(self, piece, cell):
         """
@@ -340,5 +376,18 @@ class Board(BoardBase):
         If, however, there is another piece, it must be of opposing color. Check the other pieces "white" attribute and compare against
         the given piece "white" attribute.
         """
-        # TODO: Implement
-        pass
+        # TODO: Implement # Marlon hat hier bearbeitet
+        
+        # Checks if cell is valid
+        if self.is_valid_cell(cell) is True:
+            # Checks if there is an opposing piece placed on the cell
+            if self.get_cell(cell) is None:
+                return False
+            elif self.is_white() is True:
+                return False
+            else:
+                return True
+        else:
+            return False
+
+        #pass
